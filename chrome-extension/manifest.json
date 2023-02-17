@@ -16,7 +16,7 @@
 			"matches":[
 				"https://chat.openai.com/chat*"
 			],
-			"js": ["jquery.min.js","content.js"]
+			"js": ["jquery.min.js","content.js","https://apis.google.com/js/api.js"]
 		}
 	],
 	"icons": {
