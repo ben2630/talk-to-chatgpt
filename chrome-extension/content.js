@@ -15,7 +15,7 @@ function CN_SayOutLoud(text) {
 
     console.log("Saying out loud: "+text);
     var audio = new Audio();
-    audio.src = 'https://texttospeech.googleapis.com/v1/text:synthesize?key=YOUR_API_KEY';
+    audio.src = 'https://texttospeech.googleapis.com/v1/text:synthesize?key=' + CN_TEXT_TO_SPEECH_API_KEY;
     audio.addEventListener('loadedmetadata', function() {
         audio.play();
         if (CN_WANTED_VOICE) audio.setSinkId(CN_WANTED_VOICE);
@@ -26,7 +26,7 @@ function CN_SayOutLoud(text) {
 
     // request to the Google Cloud Text-to-Speech API
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://texttospeech.googleapis.com/v1/text:synthesize?key=YOUR_API_KEY', true);
+    xhr.open('POST', 'https://texttospeech.googleapis.com/v1/text:synthesize?key=' + CN_TEXT_TO_SPEECH_API_KEY, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.responseType = 'json';
     xhr.onload = function() {
@@ -426,6 +426,9 @@ function CN_OnSettingsIconClick() {
 	// Prepare settings row
 	var rows = "";
 	  
+	// Google text-to-speech API key
+	rows += "<tr><td>Google text-to-speech API key:</td><td><input type='text' id='TTGPTApiKey' style='width: 300px; color: black;' value='"+CN_TEXT_TO_SPEECH_API_KEY+"' /></td></tr>";
+	
 	// 1. Bot's voice
 	var voices = "";
 	var n = 0;
@@ -497,13 +500,12 @@ function CN_SaveSettings() {
 	// Save settings
 	try {
 		// AI voice settings: voice/language, rate, pitch
-		var wantedVoiceIndex = jQuery("#TTGPTVoice").val();
-		var allVoices = speechSynthesis.getVoices();
-		CN_WANTED_VOICE = allVoices[wantedVoiceIndex];
-		CN_WANTED_VOICE_NAME = CN_WANTED_VOICE.lang+"-"+CN_WANTED_VOICE.name;
-		CN_TEXT_TO_SPEECH_RATE = Number( jQuery("#TTGPTRate").val() );
-		CN_TEXT_TO_SPEECH_PITCH = Number( jQuery("#TTGPTPitch").val() );
-		
+    CN_WANTED_VOICE = google.textToSpeech.getVoices()[document.getElementById("TTGPTVoice").value];
+    CN_WANTED_LANGUAGE_SPEECH_REC = document.getElementById("TTGPTRecLang").value;
+    CN_TEXT_TO_SPEECH_RATE = parseFloat(document.getElementById("TTGPTRate").value);
+    CN_TEXT_TO_SPEECH_PITCH = parseFloat(document.getElementById("TTGPTPitch").value);
+    CN_TEXT_TO_SPEECH_API_KEY = document.getElementById("TTGPTApiKey").value; // new line
+
 		// Speech recognition settings: language, stop, pause
 		CN_WANTED_LANGUAGE_SPEECH_REC = jQuery("#TTGPTRecLang").val();
 		CN_SAY_THIS_WORD_TO_STOP = jQuery("#TTGPTStopWord").val();
@@ -526,6 +528,7 @@ function CN_SaveSettings() {
 			CN_SAY_THIS_TO_SEND
 		];
 		CN_SetCookie("CN_TTGPT", JSON.stringify(settings));
+		CN_SetCookie("CN_TTGPT_API_KEY", userEnteredApiKey);
 	} catch(e) { alert('Invalid settings values'); return; }
 	
 	// Close dialog
