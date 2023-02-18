@@ -429,10 +429,9 @@ function CN_OnSettingsIconClick() {
 	// 1. Bot's voice
 	var voices = "";
 	var n = 0;
-	speechSynthesis.getVoices().forEach(function (voice) {
-		var label = `${voice.name} (${voice.lang})`;
-		if (voice.default) label += ' — DEFAULT';
-		var SEL = (CN_WANTED_VOICE && CN_WANTED_VOICE.lang == voice.lang && CN_WANTED_VOICE.name == voice.name) ? "selected=selected": "";
+	google.textToSpeech.getVoices().forEach(function (voice) {
+		var label = ${voice.name} (${voice.languageCodes[0]});
+		var SEL = (CN_WANTED_VOICE && CN_WANTED_VOICE.lang == voice.languageCodes[0] && CN_WANTED_VOICE.name == voice.name) ? "selected=selected": "";
 		voices += "<option value='"+n+"' "+SEL+">"+label+"</option>";
 		n++;
 	});
@@ -446,7 +445,7 @@ function CN_OnSettingsIconClick() {
 	
 	// 4. Speech recognition language CN_WANTED_LANGUAGE_SPEECH_REC
 	var languages = "<option value=''></option>";
-	for(var i in CN_SPEECHREC_LANGS) {
+		for(var i in CN_SPEECHREC_LANGS) {
 		var languageName = CN_SPEECHREC_LANGS[i][0];
 		for(var j in CN_SPEECHREC_LANGS[i]) {
 			if (j == 0) continue;
